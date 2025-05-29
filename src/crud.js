@@ -4,7 +4,7 @@ const API_BASE_URL = 'https://img.kebenet.com/api/v1';
 const MY_KEBENET_API_KEY = '45f70921-aad3-4ded-ba5b-601bcc46ac6e';
 
 /**
- * Helper function to parse error responses.
+ * Helper function to parse error r.
  * Attempts to parse as JSON, falls back to text if JSON parsing fails.
  * @param {Response} response - The fetch Response object.
  * @returns {Promise<object>} An object containing error details.
