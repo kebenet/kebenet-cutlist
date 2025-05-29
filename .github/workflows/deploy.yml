@@ -17,6 +17,14 @@ jobs:
           else
             echo "src_dir_status=false" >> $GITHUB_OUTPUT
           fi
+      - name: Report src directory status
+        if: always() # Ensures this step runs regardless of the previous step's outcome (within the job)
+        run: |
+          if [ "${{ steps.check_src.outputs.src_dir_status }}" == "true" ]; then
+            echo "src/ directory found and is not empty. Proceeding with deployment."
+          else
+            echo "src/ directory not found or is empty. Skipping deployment."
+          fi
       - name: FTP Deploy
         if: steps.check_src.outputs.src_dir_status == 'true'
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
@@ -27,3 +35,6 @@ jobs:
           port: 21
           local-dir: src/
           server-dir: public_html/apps/${{ github.event.repository.name }}/
+      - name: Report deployment outcome
+        if: steps.check_src.outputs.src_dir_status == 'true'
+        run: echo "Deployment to FTP server successful."
