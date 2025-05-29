@@ -1,0 +1,29 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Check if src directory exists and is not empty
+        id: check_src
+        run: |
+          if [ -d "src" ] && [ "$(ls -A src)" ]; then
+            echo "src_dir_status=true" >> $GITHUB_OUTPUT
+          else
+            echo "src_dir_status=false" >> $GITHUB_OUTPUT
+          fi
+      - name: FTP Deploy
+        if: steps.check_src.outputs.src_dir_status == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        with:
+          server: ftp://46.202.138.149
+          username: u765565545.img.kebenet.com
+          password: ${{ secrets.FTP_PASSWORD_IMG_KEBENET }}
+          port: 21
+          local-dir: src/
+          server-dir: public_html/apps/${{ github.event.repository.name }}/
