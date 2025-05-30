@@ -21,15 +21,7 @@ jobs:
 
       - name: Install lftp
         run: |
-          # Update only if cache was not hit, or if you always want the latest list
-          # A more robust way could be to touch a timestamp file and check its age.
-          # For simplicity here, we update if not restored, or you might choose to always update.
-          if [[ ${{ steps.apt-cache.outputs.cache-hit }} != 'true' ]]; then # <-- CORRECTED LINE
-            echo "APT cache not restored, updating apt lists."
-            sudo apt-get update
-          else
-            echo "APT cache restored."
-          fi
+          echo "Attempting to install lftp..."
           sudo apt-get install -y lftp
           echo "LFTP version:"
           lftp --version
