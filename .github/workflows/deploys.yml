@@ -1,0 +1,35 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Perform FTP Upload with lftp
+        run: |
+          echo "lftp will run here..."
+          lftp -d -u "u765565545.renovajob,Re.No.VA1" ftp.img.kebenet.com -e "
+            set ftp:ssl-allow no;
+            set dns:order \"inet\"; # Often helpful
+            mirror --reverse \
+                   --delete-first \
+                   --verbose \
+                   --exclude-glob .git* \
+                   --exclude .git/ \
+                   --exclude .github/ \
+                   src/ ;
+            echo 'Mirror complete. Bye!';
+            bye;
+          "
+          echo "FTP upload attempt finished."
+          
+      - name: Report deployment
+        run: echo "Deployment to FTP server successful - KEBENET©"
