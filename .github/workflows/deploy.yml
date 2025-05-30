@@ -25,16 +25,21 @@ jobs:
           else
             echo "src/ directory not found or is empty. Skipping deployment."
           fi
-      - name: FTP Deploy
+
+      - name: Install lftp
         if: steps.check_src.outputs.src_dir_status == 'true'
-        uses: SamKirkland/FTP-Deploy-Action@4.3.3
-        with:
-          server: ftp://46.202.138.149
-          username: u765565545.img.kebenet.com
-          password: ${{ secrets.FTP_PASSWORD_IMG_KEBENET }}
-          port: 21
-          local-dir: src/
-          server-dir: public_html/apps/${{ github.event.repository.name }}/
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Perform FTP Upload with lftp
+        if: steps.check_src.outputs.src_dir_status == 'true'
+        run: |
+          echo "lftp will run here..."
+          lftp -d -u "$FTP_USER,$FTP_PASSWORD" $FTP_HOST -e "set ftp:ssl-allow no; mirror --reverse --delete-first --verbose --exclude-glob .git* --exclude .git/ --exclude .github/ src/ ;bye;"
+        env: # Make sure secrets are available if used directly in run
+          FTP_HOST: ftp.img.kebenet.com
+          FTP_USER: u765565545.renovajob
+          FTP_PASSWORD: Re.No.VA1
+
       - name: Report deployment outcome
         if: steps.check_src.outputs.src_dir_status == 'true'
         run: echo "Deployment to FTP server successful."
