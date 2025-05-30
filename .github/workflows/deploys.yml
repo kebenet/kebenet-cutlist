@@ -12,10 +12,10 @@ jobs:
 
       - name: Cache apt-packages for lftp
         uses: actions/cache@v4
-        id: apt-cache # Give an id to refer to cache hit status
+        id: apt-cache # Ensure this id is set
         with:
-          path: /var/cache/apt/archives # Directory where apt stores downloaded .deb files
-          key: ${{ runner.os }}-apt-lftp-${{ hashFiles('**/lockfiles') }} # Adjust key as needed
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-lftp-${{ hashFiles('**/lockfiles') }} # Or your preferred key
           restore-keys: |
             ${{ runner.os }}-apt-lftp-
 
@@ -24,7 +24,7 @@ jobs:
           # Update only if cache was not hit, or if you always want the latest list
           # A more robust way could be to touch a timestamp file and check its age.
           # For simplicity here, we update if not restored, or you might choose to always update.
-          if [[ ${{ steps.apt-cache.outputs.cache-hit }} != 'true' ]]; then
+          if [[ ${{ steps.apt-cache.outputs.cache-hit }} != 'true' ]]; then # <-- CORRECTED LINE
             echo "APT cache not restored, updating apt lists."
             sudo apt-get update
           else
@@ -33,7 +33,7 @@ jobs:
           sudo apt-get install -y lftp
           echo "LFTP version:"
           lftp --version
-
+          
       - name: Perform FTP Upload with lftp
         run: |
           echo "lftp will run here..."
