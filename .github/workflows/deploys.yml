@@ -1,6 +1,6 @@
 name: Deploy
 on:
-  push:
+  pull_request:
     branches:
       - main
 jobs:
@@ -10,20 +10,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Cache apt-packages for lftp
-        uses: actions/cache@v4
-        id: apt-cache # Ensure this id is set
-        with:
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-lftp-${{ hashFiles('**/lockfiles') }} # Or your preferred key
-          restore-keys: |
-            ${{ runner.os }}-apt-lftp-
-
       - name: Install lftp
         run: |
           echo "Attempting to install lftp..."
           sudo apt-get install -y lftp
-          echo "LFTP version:"
           lftp --version
           
       - name: Perform FTP Upload with lftp
