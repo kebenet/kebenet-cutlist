@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="crud.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -99,15 +99,15 @@
 <body>
     <section class="section">
         <div class="container" x-data="cutlistCalculator()">
-            <h1 class="title has-text-centered is-2 primary-text">KEBENET Cutlist Calculator</h1>
-            <p class="subtitle has-text-centered is-5">Define KEBENET groups with custom dimensions & formulas!</p>
+            <h1 class="title has-text-centered is-2 primary-text">KEBENET Cutlist</h1>
+            <p class="subtitle has-text-centered is-5">KEBENET functional sheet calculator and generator!</p>
 
             <div class="tabs is-centered is-boxed is-medium">
                 <ul>
                     <li :class="{ 'is-active': activeTab === 'group' }" @click="activeTab = 'group'">
                         <a>
                             <span class="icon is-small"><i class="fas fa-cubes" aria-hidden="true"></i></span>
-                            <span>Groups</span>
+                            <span>Kitchen Component</span>
                         </a>
                     </li>
                     <li :class="{ 'is-active': activeTab === 'template' }" @click="activeTab = 'template'">
@@ -236,28 +236,28 @@
                         <div class="mt-4 has-text-centered">
                             <button class="button primary-button is-medium" @click="addTemplate()">
                                 <span class="icon"><i class="fas fa-file-medical"></i></span>
-                                <span>Add New Template</span>
+                                <span>New Template</span>
                             </button>
                             <a href="template-form.php" class="button primary-button is-medium">
                                 <span class="icon"><i class="fas fa-file-medical"></i></span>
-                                <span>Add New Template Database</span>
+                                <span>Add New Template</span>
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <div x-show="activeTab === 'group'" x-transition>
-                    <h2 class="title is-3 section-title primary-text">Groups</h2>
+                    <h2 class="title is-3 section-title primary-text">Kitchen Component</h2>
                     <div class="box mb-5"> <div class="field is-horizontal mb-4">
                             <div class="field-label is-normal">
-                                <label class="label">Add From Template:</label>
+                                <label class="label">Add Template</label>
                             </div>
                             <div class="field-body">
                                 <div class="field has-addons">
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
                                             <select x-model="selectedTemplateIdForNewGroup">
-                                                <option value="">Select Template...</option>
+                                                <option value="">Select...</option>
                                                 <template x-for="template in partDefinitionTemplates" :key="template.id">
                                                     <option :value="template.id" x-text="template.name"></option>
                                                 </template>
@@ -312,15 +312,9 @@
                                             <input class="input" :id="'groupDepth-' + group.id" type="number" x-model.number="group.dimensions.depth">
                                         </div>
                                     </div>
-                                    <div class="column is-one-quarter">
-                                        <div class="field">
-                                            <label class="label" :for="'groupDoorCount-' + group.id">Doors</label>
-                                            <input class="input" :id="'groupDoorCount-' + group.id" type="number" x-model.number="group.groupSpecificConfig.doorCount" min="0">
-                                        </div>
-                                    </div>
                                 </div>
 
-                                <h3 class="title is-5 primary-text mt-4">Part Definitions (<span x-text="group.sourceTemplateName ? 'From: ' + group.sourceTemplateName : 'Custom'"></span>)</h3>
+                                <h3 class="title is-5 primary-text mt-4">Parts(<span x-text="group.sourceTemplateName ? 'From: ' + group.sourceTemplateName : 'Custom'"></span>)</h3>
                                 <div class="table-container">
                                     <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                                         <thead>
@@ -346,7 +340,7 @@
                                 <div class="mt-3 has-text-right">
                                     <button class="button is-small primary-button" @click="addPartDefinitionToGroup(group.id)">
                                         <span class="icon"><i class="fas fa-plus"></i></span>
-                                        <span>Add Custom Part</span>
+                                        <span>Add Part</span>
                                     </button>
                                 </div>
                             </div>
@@ -361,7 +355,7 @@
                     </div>
 
                     <div class="box mt-5" x-show="resultRows.length > 0 || errorMessage || infoMessage || isLoadingOptimizationTips || isLoadingProjectSummary">
-                        <h2 class="title is-4 section-title primary-text">Final Aggregated Cutlist</h2>
+                        <h2 class="title is-4 section-title primary-text">Final Cutlist</h2>
                         <div class="notification is-info is-light mt-4" x-show="infoMessage" x-transition>
                             <button class="delete" @click="infoMessage = ''"></button>
                             <span x-html="infoMessage"></span>
@@ -393,36 +387,7 @@
                             </table>
                         </div>
 
-                        <div x-show="resultRows.length > 0 && !errorMessage.includes('No valid KEBENET widths')" class="mt-5">
-                             <div class="field is-grouped is-grouped-centered">
-                                 <p class="control">
-                                     <button class="button primary-button" @click="getOptimizationTips()" :disabled="isLoadingOptimizationTips || isLoadingProjectSummary">
-                                         <span class="icon"><i class="fas fa-magic"></i></span>
-                                         <span>✨ Get Optimization Tips</span>
-                                         <span x-show="isLoadingOptimizationTips" class="loading-spinner"></span>
-                                     </button>
-                                 </p>
-                                 <p class="control">
-                                     <button class="button primary-button" @click="getProjectSummary()" :disabled="isLoadingOptimizationTips || isLoadingProjectSummary">
-                                         <span class="icon"><i class="fas fa-file-alt"></i></span>
-                                         <span>✨ Generate Project Summary</span>
-                                         <span x-show="isLoadingProjectSummary" class="loading-spinner"></span>
-                                     </button>
-                                 </p>
-                             </div>
-                             <div x-show="optimizationTips" class="mt-4">
-                                 <h3 class="title is-5 primary-text">Material Optimization Tips:</h3>
-                                 <div class="gemini-output content" x-html="optimizationTips"></div> <button class="button is-small is-light mt-2" @click="optimizationTips = ''">Clear Tips</button>
-                             </div>
-                             <div x-show="projectSummary" class="mt-4">
-                                 <h3 class="title is-5 primary-text">Project Summary:</h3>
-                                 <div class="gemini-output content" x-html="projectSummary"></div> <button class="button is-small is-light mt-2" @click="projectSummary = ''">Clear Summary</button>
-                             </div>
-                              <div x-show="geminiError" class="notification is-danger is-light mt-4">
-                                  <button class="delete" @click="geminiError = ''"></button>
-                                  <strong class="primary-text">AI Assistant Error:</strong> <span x-html="geminiError"></span>
-                              </div>
-                         </div>
+
                     </div>
                 </div>
             </div> </div> </section>
@@ -492,11 +457,14 @@
         });
     }
 
+        const TEMPLATE_API_ROLE = 'user'; // Or 'admin'
+        const TEMPLATE_API_STORE_NAME = 'part_templates';
 
     // --- Alpine.js Component ---
     function cutlistCalculator() {
         return {
             // --- State Properties ---
+            
             activeTab: 'group',
             globalConfig: {
                 sheetThickness: 0.75,
@@ -527,11 +495,14 @@
             nextGroupId: 1,
             _globalNextGroupPartDefId: 1,    // Underscore indicates it's mainly for internal ID generation logic
 
+
             // --- Initialization ---
-            init() {
-                // Load some default templates and a group if none exist, for demo purposes
-                if (this.partDefinitionTemplates.length === 0) { this.addDefaultTemplates(); }
-                if (this.kebenetGroups.length === 0) { this.addKebenetGroup(); } // Add one default group
+           async init() {
+                if (this.partDefinitionTemplates.length === 0) { 
+ 
+                    this.loadAllTemplates();
+                } 
+                if (this.kebenetGroups.length === 0) { this.addKebenetGroup(); }
             },
 
             // --- ID Generation Helpers (Internal to Alpine component) ---
@@ -539,6 +510,54 @@
             _getNewTemplatePartDefId() { return this._globalNextTemplatePartDefId++; },
             _getNewGroupId() { return this.nextGroupId++; },
             _getNewGroupPartDefId() { return this._globalNextGroupPartDefId++; },
+
+/**
+ * Loads all templates from the SleekDB store.
+ */
+async loadAllTemplates() {
+    // 1. Set loading state and clear previous messages
+    this.isLoading = true;
+    this.message = '';
+    this.isError = false; 
+    // Assuming 'this.templates' is the array where you'll store the results
+    this.templates = [];
+    this._nextPartDefAlpineId = 1;
+
+    try {
+        // 2. Call your API function to get ALL items
+        const allData = await getAllItems(TEMPLATE_API_ROLE, TEMPLATE_API_STORE_NAME);
+
+
+        // 3. Process the ARRAY of templates
+        this.templates = allData.data.map(templateData => {
+            // For each template, process its partDefinitions
+            const processedPartDefs = (templateData.partDefinitions || []).map(pd => ({
+                ...pd,
+                // Add the unique ID just like in your single-load function
+                id: this._nextPartDefAlpineId++ 
+            }));
+
+            // Return the fully processed template object
+            return {
+                id: templateData._id, // or templateData._id depending on your API
+                name: templateData.name,
+                partDefinitions: processedPartDefs
+            };
+        });
+        
+        this.partDefinitionTemplates = this.templates;
+
+        
+    } catch (error) {
+        // 4. Handle errors if the API call fails
+        console.error("Error loading all templates:", error);
+        this.message = `Error loading templates: ${error.message}`;
+        this.isError = true;
+    } finally {
+        // 5. Always stop the loading indicator
+        this.isLoading = false;
+    }
+},
 
             // --- Template Management Methods ---
             addDefaultTemplates() {
@@ -615,7 +634,7 @@
                 if (partsForNewGroup.length === 0) {
                      partsForNewGroup.push({
                          id: this._getNewGroupPartDefId(),
-                         name: 'Side Panel (Custom)',
+                         name: 'Side Panel',
                          widthStr: 'depth',
                          heightStr: 'height',
                          quantityStr: '2'
@@ -624,11 +643,11 @@
 
                 this.kebenetGroups.push({
                     id: newGroupId,
-                    groupName: `KEBENET Group ${newGroupId}` + (sourceTemplateName !== "Custom" ? ` (from ${sourceTemplateName})` : ''),
+                    groupName: `Component ${newGroupId}` + (sourceTemplateName !== "Custom" ? ` (from ${sourceTemplateName})` : ''),
                     dimensions: { widthString: '24', height: 34.5, depth: 11.5 }, // Default dimensions
                     groupSpecificConfig: { doorCount: (sourceTemplateName.toLowerCase().includes("door") ? 2 : 0) }, // Sensible default for door count based on template name
                     partDefinitions: partsForNewGroup,
-                    sourceTemplateName: sourceTemplateName // Store the name of the template used
+                    sourceTemplateName: sourceTemplateName
                 });
             },
             removeKebenetGroup(groupIdToRemove) {
@@ -860,87 +879,13 @@
             _aggregateAndSortParts(allCalculatedParts) {
                 // Calls the globally defined helper function
                 return aggregateAndSortPartsLogic(allCalculatedParts);
-            },
+            }
 
             // --- Gemini API Methods ---
-            async callGeminiAPI(promptText, loadingFlagSetter, resultSetter) {
-                if (!this.apiKey || this.apiKey.trim() === "") {
-                    this.geminiError = "API Key for Gemini is not set. Please provide it in the script.";
-                    console.error("Gemini API Key is missing.");
-                    loadingFlagSetter(false);
-                    resultSetter(''); // Clear any previous results
-                    return;
-                }
 
-                loadingFlagSetter(true); this.geminiError = ''; // Reset error before new call
-                const payload = { contents: [{ role: "user", parts: [{ text: promptText }] }] };
-                // Ensure you are using the correct model name if it's not gemini-2.0-flash or if it changes.
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKey}`;
-
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ error: { message: "Unknown API error structure" } }));
-                        throw new Error(`API Error (${response.status}): ${errorData.error?.message || response.statusText}`);
-                    }
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0 && result.candidates[0].content.parts[0].text) {
-                        resultSetter(result.candidates[0].content.parts[0].text.trim());
-                    } else {
-                        // Log the actual response if the structure is unexpected
-                        console.warn("Unexpected API response structure:", result);
-                        if (result.promptFeedback && result.promptFeedback.blockReason) {
-                             throw new Error(`Content blocked by API. Reason: ${result.promptFeedback.blockReason}. Details: ${result.promptFeedback.blockReasonMessage || 'No additional details.'}`);
-                        }
-                        throw new Error('No valid content received from AI. The response might be empty or improperly formatted.');
-                    }
-                } catch (e) {
-                    console.error('Gemini API Call Error:', e);
-                    this.geminiError = `AI Assistant Error: ${e.message}. Check console for more details.`;
-                    resultSetter(''); // Clear any partial or old results on error
-                }
-                finally {
-                    loadingFlagSetter(false);
-                }
-            },
-            getOptimizationTips() {
-                if (this.resultRows.length === 0) { this.geminiError = "Please generate a cutlist first to get optimization tips."; return; }
-                const partsListString = this.resultRows.map(r => `- ${r.name}: ${r.calculatedWidth} x ${r.calculatedHeight} (Quantity: ${r.calculatedQuantity})`).join("\n");
-                const prompt = `I have a woodworking project (KEBENET Dapo - cabinets) and the following aggregated cutlist of parts:\n${partsListString}\n\nMy standard sheet material dimensions are: Width ${this.globalConfig.sheetWidth}, Height ${this.globalConfig.sheetHeight}, Thickness ${this.globalConfig.sheetThickness}.\n\nPlease provide concise, actionable tips for arranging these parts on the sheets to minimize waste. Focus on general strategies and common sense approaches for manual layout. Keep the advice practical for a woodworker.`;
-                this.callGeminiAPI(prompt.trim(), v => this.isLoadingOptimizationTips = v, r => this.optimizationTips = r);
-            },
-            getProjectSummary() {
-                if (this.resultRows.length === 0 && this.kebenetGroups.length === 0) { this.geminiError = "Please define KEBENET groups and generate a cutlist to get a project summary."; return; }
-
-                let projectDesc = `This KEBENET Dapo (cabinet) project consists of ${this.kebenetGroups.length} KEBENET group(s).\nDetails for each group:\n`;
-                this.kebenetGroups.forEach(g => {
-                    const widths = g.dimensions.widthString.trim().split(/\s+/).filter(w => w).join(", ") || 'N/A';
-                    projectDesc += `- Group "${g.groupName}": KEBENETs with overall dimensions (Widths: [${widths}] x Height: ${g.dimensions.height} x Depth: ${g.dimensions.depth}). Each KEBENET in this group has ${g.groupSpecificConfig.doorCount} door(s).\n`;
-                    if (g.sourceTemplateName && g.sourceTemplateName !== "Custom") {
-                        projectDesc += `  (Based on template: "${g.sourceTemplateName}")\n`;
-                    }
-                });
-
-                if (this.resultRows.length > 0) {
-                    projectDesc += `\nThe final aggregated cutlist includes ${this.resultRows.length} unique part types (name/dimension combinations):\n`;
-                    const partsSummary = this.resultRows.map(r => `  - ${r.calculatedQuantity}x ${r.name} (each ${r.calculatedWidth} x ${r.calculatedHeight})`).join("\n");
-                    projectDesc += partsSummary;
-                } else {
-                    projectDesc += "\nNo parts were generated in the final cutlist. This could be due to calculation errors, all part quantities evaluating to zero, or no valid KEBENETs being processed (e.g., groups lacking valid widths or part definitions).";
-                }
-                projectDesc += `\nGlobal configuration used: Sheet Thickness ${this.globalConfig.sheetThickness}, Standard Sheet Size ${this.globalConfig.sheetWidth}x${this.globalConfig.sheetHeight}, Door Gaps (Side/Between: ${this.globalConfig.doorGap}, Top/Overall: ${this.globalConfig.doorGapTop}).`;
-
-                const prompt = `Please generate a brief, easy-to-read project summary based on the following KEBENET Dapo (cabinet) project information. Highlight the number of groups, types of KEBENETs, and a quick overview of the generated parts if available. Be concise and informative.\n\nProject Information:\n${projectDesc}`;
-                this.callGeminiAPI(prompt.trim(), v => this.isLoadingProjectSummary = v, r => this.projectSummary = r);
-            }
         }
     }
     </script>
+    <script src="crud.js"></script>
 </body>
 </html>
