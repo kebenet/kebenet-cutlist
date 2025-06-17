@@ -183,56 +183,21 @@
                     <div class="box mb-6">
                         <h2 class="title is-3 section-title primary-text">Part Templates</h2>
                         <template x-for="(template, templateIndex) in partDefinitionTemplates" :key="template.id">
-                            <div class="card template-card">
-                                <header class="card-header">
-                                    <div class="card-header-title field is-expanded mb-0">
-                                        <label :for="'templateName-' + template.id" class="label mr-2 mb-0 is-align-self-center">Name</label>
-                                        <div class="control is-expanded">
-                                            <input class="input is-small" :id="'templateName-' + template.id" type="text" x-model="template.name" placeholder="e.g., Standard Base KEBENET">
-                                        </div>
-                                    </div>
-                                    
-                                    <a :href="'template-form.php?id=' + template.id" class="button is-small info-button mr-2" title="Edit Template">
+                            <div class="box is-flex is-justify-content-space-between is-align-items-center mb-2">
+                                <div>
+                                    <span class="has-text-weight-semibold" x-text="template.name"></span>
+                                    <span class="tag is-light ml-2" x-text="template.partDefinitions.length"></span>
+                                </div>
+                                <div class="buttons are-small">
+                                    <a :href="'template-form.php?id=' + template.id" class="button is-light info-button" title="Edit Template">
                                         <span class="icon is-small"><i class="fas fa-edit"></i></span>
                                     </a>
-                                    <a :href="'template-form.php?cloneFrom=' + template.id" class="button is-small info-button mr-2" title="Clone Template">
+                                    <a :href="'template-form.php?cloneFrom=' + template.id" class="button is-light info-button" title="Clone Template">
                                         <span class="icon is-small"><i class="fas fa-clone"></i></span>
                                     </a>
-                                    <button class="button is-small danger-button card-header-icon" @click="removeTemplate(template.id)" title="Delete Template">
+                                    <button class="button is-light danger-button" @click="removeTemplate(template.id)" title="Delete Template">
                                         <span class="icon is-small"><i class="fas fa-trash"></i></span>
                                     </button>
-                                    
-                                </header>
-                                <div class="card-content">
-                                    <h4 class="title is-6">Parts</h4>
-                                    <div class="table-container">
-                                        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                                            <thead>
-                                                <tr><th>Name</th><th>Width</th><th>Height</th><th>Qty</th><th>Action</th></tr>
-                                            </thead>
-                                            <tbody>
-                                                <template x-for="(partDef, partDefIndex) in template.partDefinitions" :key="partDef.id">
-                                                    <tr>
-                                                        <td><input class="input is-small" type="text" x-model="partDef.name"></td>
-                                                        <td><input class="input is-small" type="text" x-model="partDef.widthStr"></td>
-                                                        <td><input class="input is-small" type="text" x-model="partDef.heightStr"></td>
-                                                        <td><input class="input is-small" type="text" x-model="partDef.quantityStr"></td>
-                                                        <td>
-                                                            <button class="button is-small danger-button" @click="removePartFromTemplate(template.id, partDef.id)">
-                                                                <span class="icon is-small"><i class="fas fa-times"></i></span>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </template>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="mt-3 has-text-right">
-                                        <button class="button is-small primary-button" @click="addPartToTemplate(template.id)">
-                                            <span class="icon"><i class="fas fa-plus"></i></span>
-                                            <span>Add New Part</span>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         </template>
