@@ -195,6 +195,9 @@
                                     <a :href="'template-form.php?id=' + template.id" class="button is-small info-button mr-2" title="Edit Template">
                                         <span class="icon is-small"><i class="fas fa-edit"></i></span>
                                     </a>
+                                    <a :href="'template-form.php?cloneFrom=' + template.id" class="button is-small info-button mr-2" title="Clone Template">
+                                        <span class="icon is-small"><i class="fas fa-clone"></i></span>
+                                    </a>
                                     <button class="button is-small danger-button card-header-icon" @click="removeTemplate(template.id)" title="Delete Template">
                                         <span class="icon is-small"><i class="fas fa-trash"></i></span>
                                     </button>
@@ -606,6 +609,18 @@ async loadAllTemplates() {
                 if (template) {
                     template.partDefinitions = template.partDefinitions.filter(pd => pd.id !== partDefIdToRemove);
                 }
+            },
+            cloneTemplate(templateIdToClone) {
+                const original = this.partDefinitionTemplates.find(t => t.id === templateIdToClone);
+                if (!original) return;
+                const cloned = JSON.parse(JSON.stringify(original));
+                cloned.id = this._getNewTemplateId();
+                cloned.name = `${original.name} (Clone)`;
+                cloned.partDefinitions = cloned.partDefinitions.map(pd => ({
+                    ...pd,
+                    id: this._getNewTemplatePartDefId()
+                }));
+                this.partDefinitionTemplates.push(cloned);
             },
 
             // --- KEBENET Group Management Methods ---

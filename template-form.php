@@ -138,10 +138,17 @@
                 init() {
                     const urlParams = new URLSearchParams(window.location.search);
                     const templateId = urlParams.get('id');
+                    const cloneFrom = urlParams.get('cloneFrom');
 
                     if (templateId) {
                         this.mode = 'edit';
                         this.loadTemplate(templateId);
+                    } else if (cloneFrom) {
+                        this.mode = 'add';
+                        this.loadTemplate(cloneFrom).then(() => {
+                            this.template.id = null;
+                            this.template.name = `${this.template.name} (Clone)`;
+                        });
                     } else {
                         this.mode = 'add';
                         
